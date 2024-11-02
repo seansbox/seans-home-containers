@@ -28,6 +28,8 @@
     sudo docker exec -i swag ping -c 1 qbittorrent
     sudo docker exec -i swag ping -c 1 radarr
     sudo docker exec -i radarr ping -c 1 flaresolverr
+    # See if your media mounted correctly
+    sudo docker exec -it qbittorrent ls /data
     # Check if gluetun is connected to VPN
     sudo docker exec -i gluetun wget -qO- https://am.i.mullvad.net/connected
     # Check if qbittorrent is connected to VPN

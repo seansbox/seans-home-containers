@@ -161,6 +161,7 @@ services:
     volumes:
       - ${VOLUME_PATH}/qbittorrent:/config
       - ${MEDIA_PATH}:/data
+      - ${DOWNLOAD_PATH}:/downloads
       - ${ENTRY_PATH}/gluetun_routed.sh:/gluetun_routed.sh
     entrypoint: /gluetun_routed.sh
     command: /init
@@ -185,6 +186,7 @@ services:
     volumes:
       - ${VOLUME_PATH}/prowlarr:/config
       - ${MEDIA_PATH}:/data
+      - ${DOWNLOAD_PATH}:/downloads
       - ${ENTRY_PATH}/gluetun_routed.sh:/gluetun_routed.sh
     entrypoint: /gluetun_routed.sh
     command: /init
@@ -200,6 +202,7 @@ services:
     volumes:
       - ${VOLUME_PATH}/radarr:/config
       - ${MEDIA_PATH}:/data
+      - ${DOWNLOAD_PATH}:/downloads
       - ${ENTRY_PATH}/gluetun_routed.sh:/gluetun_routed.sh
     entrypoint: /gluetun_routed.sh
     command: /init
@@ -215,6 +218,7 @@ services:
     volumes:
       - ${VOLUME_PATH}/sonarr:/config
       - ${MEDIA_PATH}:/data
+      - ${DOWNLOAD_PATH}:/downloads
       - ${ENTRY_PATH}/gluetun_routed.sh:/gluetun_routed.sh
     entrypoint: /gluetun_routed.sh
     command: /init
