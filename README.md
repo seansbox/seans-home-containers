@@ -2,6 +2,8 @@
 
 ## Setup
 
+    cp sample.env .env
+    nano .env
     docker compose up -d
 
 ## Questions
