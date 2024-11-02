@@ -1,0 +1,232 @@
+x-common-settings: &common-settings
+  cap_add:
+    - NET_ADMIN
+  dns_search:
+    - ${LAN_DOMAIN}
+  domainname: ${LAN_DOMAIN}
+  env_file:
+    - .env
+  logging:
+    driver: json-file
+    options:
+      max-size: 10mb
+      max-file: 1
+  restart: unless-stopped
+
+services:
+  swag:
+    <<: *common-settings
+    image: linuxserver/swag:latest
+    container_name: swag
+    hostname: swag
+    networks:
+      macvlan:
+        ipv4_address: ${LAN}.${SWAG}
+    volumes:
+      - ${VOLUME_PATH}/swag:/config
+      - ${ENTRY_PATH}/swag.sh:/swag.sh
+    entrypoint: /swag.sh
+    command: /init
+    environment:
+      - URL=swag.${PUB_DOMAIN}
+      - SUBDOMAINS=wildcard
+      - VALIDATION=dns
+      - DNSPLUGIN=cloudflare
+
+  heimdall:
+    <<: *common-settings
+    image: linuxserver/heimdall:latest
+    container_name: heimdall
+    hostname: heimdall
+    networks:
+      macvlan:
+        ipv4_address: ${LAN}.${HEIMDALL}
+    volumes:
+      - ${VOLUME_PATH}/heimdall:/config
+
+  guacamole:
+    <<: *common-settings
+    image: abesnier/guacamole:latest
+    container_name: guacamole
+    hostname: guacamole
+    networks:
+      macvlan:
+        ipv4_address: ${LAN}.${GUACAMOLE}
+    volumes:
+      - ${VOLUME_PATH}/guacamole:/config
+
+  code-server:
+    <<: *common-settings
+    image: linuxserver/code-server:latest
+    container_name: code-server
+    hostname: code-server
+    networks:
+      macvlan:
+        ipv4_address: ${LAN}.${CODESERVER}
+    volumes:
+      - ${VOLUME_PATH}/code-server:/config
+
+  syncthing:
+    <<: *common-settings
+    image: syncthing/syncthing:latest
+    container_name: syncthing
+    hostname: syncthing
+    networks:
+      macvlan:
+        ipv4_address: ${LAN}.${SYNCTHING}
+    volumes:
+      - ${VOLUME_PATH}/syncthing:/var/syncthing
+
+  homeassistant:
+    <<: *common-settings
+    image: homeassistant/home-assistant:latest
+    container_name: homeassistant
+    hostname: homeassistant
+    networks:
+      macvlan:
+        ipv4_address: ${LAN}.${HOMEASSISTANT}
+    volumes:
+      - ${VOLUME_PATH}/homeassistant:/config
+      - ${ENTRY_PATH}/homeassistant.sh:/homeassistant.sh
+    entrypoint: /homeassistant.sh
+    command: /init
+
+  homebridge:
+    <<: *common-settings
+    image: homebridge/homebridge:latest
+    container_name: homebridge
+    hostname: homebridge
+    networks:
+      macvlan:
+        ipv4_address: ${LAN}.${HOMEBRIDGE}
+    volumes:
+      - ${VOLUME_PATH}/homebridge:/config
+
+  esphome:
+    <<: *common-settings
+    image: esphome/esphome:latest
+    container_name: esphome
+    hostname: esphome
+    networks:
+      macvlan:
+        ipv4_address: ${LAN}.${ESPHOME}
+    volumes:
+      - ${VOLUME_PATH}/esphome:/config
+
+  plex:
+    <<: *common-settings
+    image: plexinc/pms-docker
+    container_name: plex
+    hostname: plex
+    networks:
+      macvlan:
+        ipv4_address: ${LAN}.${PLEX}
+    environment:
+      - PLEX_CLAIM=${PLEX_CLAIM}
+      - ADVERTISE_IP="http://plex.${PUB_DOMAIN}:32400/"
+    volumes:
+      - ${VOLUME_PATH}/plex:/config
+      - ${TEMP_PATH}:/transcode
+      - ${MEDIA_PATH}:/data
+
+  gluetun:
+    <<: *common-settings
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    hostname: gluetun
+    privileged: true # Needed due to custom entrypoint using iptables
+    networks:
+      macvlan:
+        ipv4_address: ${LAN}.${GLUETUN}
+    volumes:
+      - ${VOLUME_PATH}/gluetun:/gluetun
+      - ${ENTRY_PATH}/gluetun_router.sh:/gluetun_router.sh
+    entrypoint: /gluetun_router.sh
+    command: /gluetun-entrypoint
+    environment:
+      - VPN_SERVICE_PROVIDER=${VPN_PROVIDER}
+      - VPN_TYPE=${VPN_TYPE}
+      - WIREGUARD_PRIVATE_KEY=${VPN_KEY}
+      - WIREGUARD_ADDRESSES=${VPN_ADDR}
+      - SERVER_CITIES=${VPN_CITY}
+
+  qbittorrent:
+    <<: *common-settings
+    image: linuxserver/qbittorrent
+    container_name: qbittorrent
+    hostname: qbittorrent
+    networks:
+      macvlan:
+        ipv4_address: ${LAN}.${QBITTORRENT}
+    volumes:
+      - ${VOLUME_PATH}/qbittorrent:/config
+      - ${MEDIA_PATH}:/data
+      - ${ENTRY_PATH}/gluetun_routed.sh:/gluetun_routed.sh
+    entrypoint: /gluetun_routed.sh
+    command: /init
+
+  flaresolverr:
+    <<: *common-settings
+    image: flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    hostname: flaresolverr
+    networks:
+      macvlan:
+        ipv4_address: ${LAN}.${FLARESOLVERR}
+
+  prowlarr:
+    <<: *common-settings
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    hostname: prowlarr
+    networks:
+      macvlan:
+        ipv4_address: ${LAN}.${PROWLARR}
+    volumes:
+      - ${VOLUME_PATH}/prowlarr:/config
+      - ${MEDIA_PATH}:/data
+      - ${ENTRY_PATH}/gluetun_routed.sh:/gluetun_routed.sh
+    entrypoint: /gluetun_routed.sh
+    command: /init
+
+  radarr:
+    <<: *common-settings
+    image: linuxserver/radarr:latest
+    container_name: radarr
+    hostname: radarr
+    networks:
+      macvlan:
+        ipv4_address: ${LAN}.${RADARR}
+    volumes:
+      - ${VOLUME_PATH}/radarr:/config
+      - ${MEDIA_PATH}:/data
+      - ${ENTRY_PATH}/gluetun_routed.sh:/gluetun_routed.sh
+    entrypoint: /gluetun_routed.sh
+    command: /init
+
+  sonarr:
+    <<: *common-settings
+    image: linuxserver/sonarr:latest
+    container_name: sonarr
+    hostname: sonarr
+    networks:
+      macvlan:
+        ipv4_address: ${LAN}.${SONARR}
+    volumes:
+      - ${VOLUME_PATH}/sonarr:/config
+      - ${MEDIA_PATH}:/data
+      - ${ENTRY_PATH}/gluetun_routed.sh:/gluetun_routed.sh
+    entrypoint: /gluetun_routed.sh
+    command: /init
+
+networks:
+  macvlan:
+    name: local
+    driver: macvlan
+    driver_opts:
+      parent: ${LAN_IF}
+    ipam:
+      driver: default
+      config:
+        - subnet: ${LAN}.0/${LAN_SUBNET}
+          gateway: ${LAN}.${LAN_GATEWAY}
