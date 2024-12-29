@@ -206,6 +206,8 @@ services:
       - ${ENTRY_PATH}/gluetun_routed.sh:/gluetun_routed.sh
     entrypoint: /gluetun_routed.sh
     command: /init
+    ports:
+      - "7878:7878"
 
   sonarr:
     <<: *common-settings
