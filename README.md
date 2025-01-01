@@ -18,8 +18,8 @@
 
 - Why not 'service:gluetun'?
 
-  - It looks easier, but there are challenges (e.g. overlapping ports, shared hostnames, need for aliases, etc.)
-  - Creating small custom entrypoints for router/routed is actualy pretty straight-forward and reusable
+  - It looks easier, but there are challenges (e.g. overlapping ports, shared hostnames, need for DNS aliases, etc.)
+  - Creating small custom entrypoints for router/routed is pretty straight-forward and reusable
   - All containers look and act the same regarding networking, for a more consistent experience
 
 ## Testing
