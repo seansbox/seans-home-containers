@@ -54,8 +54,9 @@
     # Adding the mount to fstab
     sudo nano /etc/fstab
     # <file system> <mount point> <type> <options> <dump> <pass>
-    UUID=66C9-E45D /media/sean/Media25 exfat noauto,x-systemd.automount,nofail 0 2
-    UUID=77DE-F780 /media/sean/Media26 exfat noauto,x-systemd.automount,nofail 0 2
+    UUID=66C9-E45D /media/sean/Media25 exfat noauto,x-systemd.automount,nofail,umask=000 0 2
+    UUID=77DE-F780 /media/sean/Media26 exfat noauto,x-systemd.automount,nofail,umask=000 0 2
+    UUID=679C-D726 /media/sean/Media2TB exfat noauto,x-systemd.automount,nofail,umask=000 0 2
 
     # Mount test
     systemctl daemon-reload
