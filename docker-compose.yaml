@@ -100,7 +100,7 @@ services:
       macvlan:
         ipv4_address: ${LAN}.${HOMEBRIDGE}
     volumes:
-      - ${VOLUME_PATH}/homebridge:/config
+      - ${VOLUME_PATH}/homebridge:/homebridge
 
   esphome:
     <<: *common-settings
