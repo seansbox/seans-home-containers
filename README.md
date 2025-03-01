@@ -63,3 +63,7 @@
     sudo mount -a
     sudo reboot
     df -h
+
+## Mullvad Notes
+
+- https://github.com/qdm12/gluetun/discussions/805#discussioncomment-2026642
