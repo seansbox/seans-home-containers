@@ -227,24 +227,6 @@ services:
     entrypoint: /gluetun_routed.sh
     command: /init
 
-  readarr:
-    <<: *common-settings
-    image: lscr.io/linuxserver/readarr:develop
-    container_name: readarr
-    hostname: readarr
-    networks:
-      macvlan:
-        ipv4_address: ${LAN}.${READARR}
-    volumes:
-      - ${VOLUME_PATH}/readarr:/config
-      - ${MEDIA_PATH}:/data
-      - ${DOWNLOAD_PATH}:/downloads
-      - ${ENTRY_PATH}/gluetun_routed.sh:/gluetun_routed.sh
-    entrypoint: /gluetun_routed.sh
-    command: /init
-    ports:
-      - "8787:8787"
-
 networks:
   macvlan:
     name: local
